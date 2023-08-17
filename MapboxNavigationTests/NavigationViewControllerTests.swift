@@ -5,8 +5,8 @@ import Turf
 @testable import MapboxNavigation
 import TestHelpers
 
-let response = try! Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: []), Route.self)
-let otherResponse = try! Fixture.JSONFromFileNamed(name: "route-for-lane-testing", bundle: .module, options: NavigationRouteOptions(waypoints: []), Route.self)
+//let response = try! Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: []), RouteResponse.self)
+//let otherResponse = try! Fixture.JSONFromFileNamed(name: "route-for-lane-testing", bundle: .module, options: NavigationRouteOptions(waypoints: []), RouteResponse.self)
 
 class NavigationViewControllerTests: XCTestCase {
     
@@ -49,10 +49,10 @@ class NavigationViewControllerTests: XCTestCase {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
 //        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        let route = response
+        let route = try! Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]), RouteResponse.self)
 //        route.accessToken = "foo"
         
-        return route
+        return route.routes!.first!
     }()
     
     lazy var newRoute: Route = {
@@ -60,10 +60,10 @@ class NavigationViewControllerTests: XCTestCase {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.901166, longitude: -77.036548))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.900206, longitude: -77.033792))
 //        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        let route = response
+        let route = try! Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]), RouteResponse.self)
 //        route.accessToken = "bar"
         
-        return route
+        return route.routes!.first!
     }()
     
     override func setUp() {

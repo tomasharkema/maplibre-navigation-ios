@@ -673,7 +673,7 @@ extension NavigationViewController: RouteControllerDelegate {
     }
 
     public func routeController(_ routeController: RouteController, shouldPreventReroutesWhenArrivingAt waypoint: Waypoint) -> Bool {
-        fatalError("ni")
+        true
     }
 }
 
@@ -786,7 +786,7 @@ extension NavigationViewControllerDelegate {
     }
 
     func navigationViewController(_ navigationViewController: NavigationViewController, mapViewUserAnchorPoint mapView: NavigationMapView) -> CGPoint {
-        fatalError()
+        .zero
     }
 
     func navigationViewController(_ navigationViewController: NavigationViewController, shouldDiscard location: CLLocation) -> Bool {

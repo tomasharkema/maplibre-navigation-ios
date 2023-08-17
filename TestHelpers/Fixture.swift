@@ -31,7 +31,7 @@ public class Fixture {
     public class func route(from filename: String, bundle: Bundle,
                             options: RouteOptions,
                             credentials: Credentials = .init(accessToken: " ")) throws -> Route {
-        return try Fixture.JSONFromFileNamed(name: filename, bundle: bundle, options: options, credentials: credentials, Route.self)
+        return try Fixture.JSONFromFileNamed(name: filename, bundle: bundle, options: options, credentials: credentials, RouteResponse.self).routes!.first!
     }
 
     fileprivate class func route(from response: Data) -> Route {

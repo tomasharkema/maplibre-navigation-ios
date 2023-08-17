@@ -20,7 +20,9 @@ class MapboxNavigationTests: FBSnapshotTestCase {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
         let options = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
-        route = try! Fixture.JSONFromFileNamed(name: "route-with-lanes", bundle: .module, options: options, Route.self)
+
+        let response = try! Fixture.JSONFromFileNamed(name: "route-with-lanes", bundle: .module, options: options, RouteResponse.self)
+        route = response.routes!.first!
 
 //        let response = Fixture.JSONFromFileNamed(name: "route-with-lanes", bundle: .module, Route.self)
 //        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String : Any]

@@ -1,14 +1,10 @@
 import XCTest
+import TestHelpers
 import MapboxDirections
 @testable import MapboxCoreNavigation
 @testable import MapboxNavigation
 
 class StepsViewControllerTests: XCTestCase {
-    
-    struct Constants {
-        static let jsonRoute = response//(response["routes"] as! [AnyObject]).first as! [String: Any]
-        static let accessToken = "nonsense"
-    }
     
     lazy var dependencies: (stepsViewController: StepsViewController, routeController: RouteController, firstLocation: CLLocation, lastLocation: CLLocation) = {
         
@@ -31,9 +27,8 @@ class StepsViewControllerTests: XCTestCase {
     lazy var initialRoute: Route = {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.764793, longitude: -122.463161))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 34.054081, longitude: -118.243412))
-        let route = Constants.jsonRoute//Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-//        route.accessToken = "nonsense"
-        return route
+        let route = try! Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]), RouteResponse.self)
+        return route.routes!.first!
     }()
     
     func testRebuildStepsInstructionsViewDataSource() {
