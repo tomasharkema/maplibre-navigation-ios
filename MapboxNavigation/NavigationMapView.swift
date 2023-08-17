@@ -1225,7 +1225,7 @@ public protocol NavigationMapViewDelegate: AnyObject {
     func navigationMapViewUserAnchorPoint(_ mapView: NavigationMapView) -> CGPoint
 }
 
-extension NavigationMapViewDelegate {
+public extension NavigationMapViewDelegate {
     func navigationMapView(_ mapView: NavigationMapView, routeStyleLayerWithIdentifier identifier: String, source: MGLSource) -> MGLStyleLayer? {
         nil
     }
