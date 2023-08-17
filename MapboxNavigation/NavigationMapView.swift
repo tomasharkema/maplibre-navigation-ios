@@ -1118,7 +1118,6 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
 /**
  The `NavigationMapViewDelegate` provides methods for configuring the NavigationMapView, as well as responding to events triggered by the NavigationMapView.
  */
-//@objc(MBNavigationMapViewDelegate)
 public protocol NavigationMapViewDelegate: AnyObject {
     /**
      Asks the receiver to return an MGLStyleLayer for routes, given an identifier and source.
@@ -1166,7 +1165,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter mapView: The NavigationMapView.
      - parameter route: The route that was selected.
     */
-//    @objc(navigationMapView:didSelectRoute:)
     func navigationMapView(_ mapView: NavigationMapView, didSelect route: Route)
     
     /**
@@ -1174,7 +1172,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter mapView: The NavigationMapView.
      - parameter waypoint: The waypoint that was selected.
      */
-//    @objc(navigationMapView:didSelectWaypoint:)
     func navigationMapView(_ mapView: NavigationMapView, didSelect waypoint: Waypoint)
     
     /**
@@ -1184,7 +1181,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter routes: The routes that the sender is asking about. The first route will always be rendered as the main route, while all subsequent routes will be rendered as alternate routes.
      - returns: Optionally, a `MGLShape` that defines the shape of the route, or `nil` to use default behavior.
      */
-//    @objc(navigationMapView:shapeForRoutes:)
     func navigationMapView(_ mapView: NavigationMapView, shapeFor routes: [Route]) -> MGLShape?
     
     /**
@@ -1194,7 +1190,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter route: The route that the sender is asking about.
      - returns: Optionally, a `MGLShape` that defines the shape of the route at lower zoomlevels, or `nil` to use default behavior.
      */
-//    @objc(navigationMapView:simplifiedShapeForRoute:)
     func navigationMapView(_ mapView: NavigationMapView, simplifiedShapeFor route: Route) -> MGLShape?
     
     /**
@@ -1203,7 +1198,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter waypoints: The waypoints to be displayed on the map.
      - returns: Optionally, a `MGLShape` that defines the shape of the waypoint, or `nil` to use default behavior.
      */
-//    @objc(navigationMapView:shapeForWaypoints:legIndex:)
     func navigationMapView(_ mapView: NavigationMapView, shapeFor waypoints: [Waypoint], legIndex: Int) -> MGLShape?
     
     /**
@@ -1212,7 +1206,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter annotation: The annotation to be styled.
      - returns: Optionally, a `MGLAnnotationImage` that defines the image used for the annotation.
      */
-//    @objc(navigationMapView:imageForAnnotation:)
     func navigationMapView(_ mapView: MGLMapView, imageFor annotation: MGLAnnotation) -> MGLAnnotationImage?
     
     /**
@@ -1221,7 +1214,6 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter annotation: The annotation to be styled.
      - returns: Optionally, a `MGLAnnotationView` that defines the view used for the annotation.
      */
-//    @objc(navigationMapView:viewForAnnotation:)
     func navigationMapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView?
     
     /**
@@ -1230,22 +1222,82 @@ public protocol NavigationMapViewDelegate: AnyObject {
      - parameter mapView: The NavigationMapView.
      - returns: A CGPoint (in regular coordinate-space) that represents the point on-screen where the user location icon should be drawn.
     */
-//    @objc(navigationMapViewUserAnchorPoint:)
     func navigationMapViewUserAnchorPoint(_ mapView: NavigationMapView) -> CGPoint
 }
+
+extension NavigationMapViewDelegate {
+    func navigationMapView(_ mapView: NavigationMapView, routeStyleLayerWithIdentifier identifier: String, source: MGLSource) -> MGLStyleLayer? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, waypointStyleLayerWithIdentifier identifier: String, source: MGLSource) -> MGLStyleLayer? {
+        return nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, waypointSymbolStyleLayerWithIdentifier identifier: String, source: MGLSource) -> MGLStyleLayer? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, routeCasingStyleLayerWithIdentifier identifier: String, source: MGLSource) -> MGLStyleLayer? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, didSelect route: Route) {
+
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, didSelect waypoint: Waypoint) {
+
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, shapeFor routes: [Route]) -> MGLShape? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, simplifiedShapeFor route: Route) -> MGLShape? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: NavigationMapView, shapeFor waypoints: [Waypoint], legIndex: Int) -> MGLShape? {
+        nil
+    }
+
+    func navigationMapView(_ mapView: MGLMapView, imageFor annotation: MGLAnnotation) -> MGLAnnotationImage? {
+        nil
+    }
+
+    /**
+     Asks the receiver to return an MGLAnnotationView that describes the image used an annotation.
+     - parameter mapView: The MGLMapView.
+     - parameter annotation: The annotation to be styled.
+     - returns: Optionally, a `MGLAnnotationView` that defines the view used for the annotation.
+     */
+    func navigationMapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
+        nil
+    }
+
+    /**
+     Asks the receiver to return a CGPoint to serve as the anchor for the user icon.
+     - important: The return value should be returned in the normal UIKit coordinate-space, NOT CoreAnimation's unit coordinate-space.
+     - parameter mapView: The NavigationMapView.
+     - returns: A CGPoint (in regular coordinate-space) that represents the point on-screen where the user location icon should be drawn.
+     */
+    func navigationMapViewUserAnchorPoint(_ mapView: NavigationMapView) -> CGPoint {
+        fatalError()
+    }
+}
+
 
 // MARK: NavigationMapViewCourseTrackingDelegate
 /**
  The `NavigationMapViewCourseTrackingDelegate` provides methods for responding to the `NavigationMapView` starting or stopping course tracking.
  */
-//@objc(MBNavigationMapViewCourseTrackingDelegate)
 public protocol NavigationMapViewCourseTrackingDelegate: AnyObject {
     /**
      Tells the receiver that the map is now tracking the user course.
      - seealso: NavigationMapView.tracksUserCourse
      - parameter mapView: The NavigationMapView.
      */
-//    @objc(navigationMapViewDidStartTrackingCourse:)
     func navigationMapViewDidStartTrackingCourse(_ mapView: NavigationMapView)
     
     /**
@@ -1253,6 +1305,5 @@ public protocol NavigationMapViewCourseTrackingDelegate: AnyObject {
      - seealso: NavigationMapView.tracksUserCourse
      - parameter mapView: The NavigationMapView.
      */
-//    @objc(navigationMapViewDidStopTrackingCourse:)
     func navigationMapViewDidStopTrackingCourse(_ mapView: NavigationMapView)
 }
