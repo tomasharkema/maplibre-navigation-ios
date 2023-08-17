@@ -5,21 +5,27 @@ import Turf
 import CoreLocation
 import TestHelpers
 
-
-let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
-let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-let routeOptions = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
-let response = try! Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)
-let directions = Directions(credentials: Credentials(accessToken: "pk.feedCafeDeadBeefBadeBede"))
-let route = response.routes!.first! //Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-
 let waitForInterval: TimeInterval = 5
 
 
 class MapboxCoreNavigationTests: XCTestCase {
     
     var navigation: RouteController!
-    
+    var routeOptions: RouteOptions!
+    var directions: Directions!
+    var route: Route!
+
+    override func setUp() {
+        super.setUp()
+
+        let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
+        let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
+        routeOptions = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+        let response = try! Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)
+        directions = Directions(credentials: Credentials(accessToken: "pk.feedCafeDeadBeefBadeBede"))
+        route = response.routes!.first!
+    }
+
     func testDepart() {
 //        route.accessToken = "foo"
         navigation = RouteController(along: route, directions: directions)

@@ -15,10 +15,6 @@ extension Bundle {
 
 class RouteControllerTests: XCTestCase {
 
-    struct Constants {
-        static let jsonRoute = response
-        static let accessToken = "nonsense"
-    }
     let directionsClientSpy = DirectionsSpy(credentials: Credentials(accessToken: "garbage", host: nil))
     let delegate = RouteControllerDelegateSpy()
 
@@ -48,17 +44,21 @@ class RouteControllerTests: XCTestCase {
     lazy var initialRoute: Route = {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-        let route = Constants.jsonRoute.routes!.first! //Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-//        route.accessToken = Constants.accessToken
-        return route
+        let routeOptions = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+        let response = try! Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)
+        return response.routes!.first!
     }()
 
-    lazy var alternateRoute: Route = {
+    lazy var alternateRouteOptions: RouteOptions = {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.893922, longitude: -77.023900))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.880727, longitude: -77.024888))
-        let route = Constants.jsonRoute.routes!.first!//Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-//        route.accessToken = Constants.accessToken
-        return route
+        return NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+    }()
+
+    lazy var alternateRoute: RouteResponse = {
+        let routeOptions = alternateRouteOptions
+        let response = try! Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)
+        return response
     }()
 
     override func setUp() {
@@ -171,6 +171,7 @@ class RouteControllerTests: XCTestCase {
 //        let route = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
 
 //        route.accessToken = "foo"
+        let directions = Directions(credentials: Credentials(accessToken: "pk.feedCafeDeadBeefBadeBede"))
         let navigation = RouteController(along: route, directions: directions)
         let firstCoord = navigation.routeProgress.currentLegProgress.nearbyCoordinates.first!
         let firstLocation = CLLocation(latitude: firstCoord.latitude, longitude: firstCoord.longitude)
@@ -239,9 +240,8 @@ class RouteControllerTests: XCTestCase {
         wait(for: [willRerouteNotificationExpectation], timeout: 0.1)
 
         // MARK: Upon rerouting successfully...
-        let response = try JSONDecoder().decode(RouteResponse.self, from: Data())
-        // [alternateRoute]
-        directionsClientSpy.fireLastCalculateCompletion(with: (routeOptions, Credentials()), result: .success(response))
+
+        directionsClientSpy.fireLastCalculateCompletion(with: (alternateRouteOptions, Credentials(accessToken: " ")), result: .success(alternateRoute))
 
         // MARK: It tells the delegate & posts a didReroute notification
         XCTAssertTrue(delegate.recentMessages.contains("routeController(_:didRerouteAlong:reason:)"))
@@ -346,7 +346,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03920380, longitude: 5.55133121)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -358,7 +358,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03920380, longitude: 5.55133121)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -371,7 +371,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03920380, longitude: 5.55133121)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -383,7 +383,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.0392038, longitude: 5.55133121)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -396,7 +396,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.0392038, longitude: 5.55133121)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -408,7 +408,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -421,7 +421,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     
@@ -434,7 +434,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
 
@@ -601,7 +601,7 @@ class RouteControllerTests: XCTestCase {
                 CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
             ],
             bundle: .module,
-            accessToken: Constants.accessToken
+            accessToken: "bogus"
         )
     }()
     

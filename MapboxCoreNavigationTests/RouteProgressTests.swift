@@ -2,8 +2,25 @@ import Foundation
 import XCTest
 import MapboxDirections
 @testable import MapboxCoreNavigation
+import CoreLocation
+import TestHelpers
 
 class RouteProgressTests: XCTestCase {
+
+    var route: Route!
+
+    override func setUp() {
+        super.setUp()
+
+        let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
+        let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
+        let routeOptions = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+        let response = try! Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)
+        let directions = Directions(credentials: Credentials(accessToken: "pk.feedCafeDeadBeefBadeBede"))
+
+        route = response.routes!.first!
+    }
+
     func testRouteProgress() {
         let routeProgress = RouteProgress(route: route)
         XCTAssertEqual(routeProgress.fractionTraveled, 0)

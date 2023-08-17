@@ -1,0 +1,45 @@
+{
+  "configurations" : [
+    {
+      "id" : "39BD1314-E572-4287-8E93-41A8658FCC33",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "testExecutionOrdering" : "random",
+    "testRepetitionMode" : "retryOnFailure",
+    "testTimeoutsEnabled" : true,
+    "threadSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MapboxCoreNavigationTests",
+        "name" : "MapboxCoreNavigationTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MapboxNavigationTests",
+        "name" : "MapboxNavigationTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "MapboxNavigationTestsObjC",
+        "name" : "MapboxNavigationTestsObjC"
+      }
+    }
+  ],
+  "version" : 1
+}

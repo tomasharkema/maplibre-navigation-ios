@@ -6,7 +6,9 @@ import PackageDescription
 let package = Package(
     name: "maplibre-navigation-ios",
     defaultLocalization: "en",
-    platforms: [.iOS(.v14)],
+    platforms: [
+        .macOS(.v10_14), .iOS(.v14), .watchOS(.v5), .tvOS(.v14)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -25,10 +27,10 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/mapbox/mapbox-directions-swift.git", from: "2.9.1"),
+        .package(url: "https://github.com/flitsmeister/mapbox-directions-swift.git", branch: "feature/spm-2.11"),
         .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution.git", from: "5.13.0"),
         .package(url: "https://github.com/mapbox/MapboxGeocoder.swift.git", from: "0.15.0"),
-        .package(url: "https://github.com/mapbox/turf-swift.git", from: "2.6.0"),
+        .package(url: "https://github.com/mapbox/turf-swift.git", from: "2.6.1"),
         .package(url: "https://github.com/mapbox/mapbox-speech-swift.git", from: "2.1.1"),
         .package(url: "https://github.com/ceeK/Solar.git", from: "3.0.1"),
         .package(url: "https://github.com/uber/ios-snapshot-test-case.git", from: "8.0.0"),
