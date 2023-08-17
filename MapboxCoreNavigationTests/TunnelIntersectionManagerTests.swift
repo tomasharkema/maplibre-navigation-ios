@@ -15,7 +15,7 @@ struct TunnelDetectorTestData {
 let tunnelWayPoint1 = Waypoint(coordinate: TunnelDetectorTestData.startLocation)
 let tunnelWaypoint2 = Waypoint(coordinate: TunnelDetectorTestData.endLocation)
 let tunnelOptions = NavigationRouteOptions(waypoints: [tunnelWayPoint1, tunnelWaypoint2])
-let tunnelRoute = Fixture.JSONFromFileNamed(name: TunnelDetectorTestData.ninthStreetFileName, bundle: .module, options: tunnelOptions, Route.self)!
+let tunnelRoute = try! Fixture.JSONFromFileNamed(name: TunnelDetectorTestData.ninthStreetFileName, bundle: .module, options: tunnelOptions, Route.self)
 //let tunnelJsonRoute = (tunnelResponse[TunnelDetectorTestData.kRouteKey] as! [AnyObject]).first as! [String: Any]
 //let tunnelRoute = Route(json: tunnelJsonRoute, waypoints: [tunnelWayPoint1, tunnelWaypoint2], options: NavigationRouteOptions(waypoints: [tunnelWayPoint1, tunnelWaypoint2]))
 

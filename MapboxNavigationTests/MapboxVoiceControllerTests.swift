@@ -16,7 +16,7 @@ class MapboxVoiceControllerTests: XCTestCase {
             //TODO: these waypoints have nothing to do with this route. Not sure if it matters.
             let waypoints = [Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165)), Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))]
             let options = NavigationRouteOptions(waypoints: waypoints)
-            return Fixture.route(from: "route-with-instructions", bundle: .module, options: options)
+            return try! Fixture.route(from: "route-with-instructions", bundle: .module, options: options)
         }
     }
 

@@ -159,12 +159,12 @@ class RouteControllerTests: XCTestCase {
         XCTAssertEqual(navigation.location!.coordinate, futureInaccurateLocation.coordinate, "Inaccurate location is still snapped")
     }
 
-    func testUserPuckShouldFaceBackwards() {
+    func testUserPuckShouldFaceBackwards() throws {
         // This route is a simple straight line: http://geojson.io/#id=gist:anonymous/64cfb27881afba26e3969d06bacc707c&map=17/37.77717/-122.46484
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
         let options = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
-        let route = Fixture.JSONFromFileNamed(name: "straight-line", bundle: .module, options: options, Route.self)!
+        let route = try Fixture.JSONFromFileNamed(name: "straight-line", bundle: .module, options: options, Route.self)
 //        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
 
 //        let directions = Directions(accessToken: "pk.feedCafeDeadBeefBadeBede")
@@ -339,7 +339,7 @@ class RouteControllerTests: XCTestCase {
     
     // MARK: - Matching route geometries
     lazy var nijmegenArnhemVeenendaal = {
-        Route(
+        try! Route(
             jsonFileName: "Nijmegen-Arnhem-Veenendaal",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 51.83116792, longitude: 5.83897820),
@@ -351,7 +351,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var nijmegenBemmelVeenendaal = {
-        Route(
+        try! Route(
             jsonFileName: "Nijmegen-Bemmel-Veenendaal",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 51.83116792, longitude: 5.83897820),
@@ -364,7 +364,7 @@ class RouteControllerTests: XCTestCase {
     
     // Same route, routed on a different day
     lazy var nijmegenBemmelVeenendaal2 = {
-        Route(
+        try! Route(
             jsonFileName: "Nijmegen-Bemmel-Veenendaal2",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 51.83116792, longitude: 5.83897820),
@@ -376,7 +376,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var wolfhezeVeenendaalNormal = {
-        Route(
+        try! Route(
             jsonFileName: "Wolfheze-Veenendaal-Normal",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 51.99711882858318, longitude: 5.7932572786103265),
@@ -388,7 +388,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var wolfhezeVeenendaalSmallDetourAtEnd = {
-        Route(
+        try! Route(
             jsonFileName: "Wolfheze-Veenendaal-Small-Detour-At-End",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 51.99711882858318, longitude: 5.7932572786103265),
@@ -401,7 +401,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var a12ToVeenendaalNormal = {
-        Route(
+        try! Route(
             jsonFileName: "A12-To-Veenendaal-Normal",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
@@ -413,7 +413,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var a12ToVeenendaalSlightDifference = {
-        Route(
+        try! Route(
             jsonFileName: "A12-To-Veenendaal-Slight-Difference",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
@@ -426,7 +426,7 @@ class RouteControllerTests: XCTestCase {
     }()
     
     lazy var a12ToVeenendaalBiggerDetour = {
-        Route(
+        try! Route(
             jsonFileName: "A12-To-Veenendaal-Bigger-Detour",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
@@ -594,7 +594,7 @@ class RouteControllerTests: XCTestCase {
     // Same exact JSON as a12ToVeenendaalNormal, but with one of the steps increased in 'duration' with 500 secs simulating a traffic jam
     // Makes checking 'durationRemaining' work, as that is a sum of all step's 'duration' in a leg
     lazy var a12ToVeenendaalNormalWithTraffic = {
-        Route(
+        try! Route(
             jsonFileName: "A12-To-Veenendaal-Normal-With-Big-Trafficjam",
             waypoints: [
                 CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),

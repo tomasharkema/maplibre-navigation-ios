@@ -2,10 +2,21 @@ import MapboxDirections
 import Foundation
 import CoreLocation
 
+extension RouteLeg {
+    internal var activityType: CLActivityType {
+        switch self.profileIdentifier {
+        case ProfileIdentifier.cycling, ProfileIdentifier.walking:
+            return .fitness
+        default:
+            return .automotiveNavigation
+        }
+    }
+}
+
 extension RouteOptions {
     internal var activityType: CLActivityType {
         switch self.profileIdentifier {
-        case MBDirectionsProfileIdentifier.cycling, MBDirectionsProfileIdentifier.walking:
+        case ProfileIdentifier.cycling, ProfileIdentifier.walking:
             return .fitness
         default:
             return .automotiveNavigation

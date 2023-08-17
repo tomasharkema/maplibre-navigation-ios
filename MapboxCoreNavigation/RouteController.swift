@@ -138,8 +138,8 @@ open class RouteController: NSObject, Router {
         self.directions = directions
         self.routeProgress = RouteProgress(route: route)
         self.locationManager = locationManager
-//        self.locationManager.activityType = options.activityType
-        fatalError("OPTIONS!")
+        self.locationManager.activityType = routeProgress.currentLeg.activityType
+//        fatalError("OPTIONS!")
 //        self.routeOptions = options
         UIDevice.current.isBatteryMonitoringEnabled = true
         

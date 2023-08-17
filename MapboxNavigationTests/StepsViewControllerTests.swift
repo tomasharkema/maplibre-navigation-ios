@@ -6,7 +6,7 @@ import MapboxDirections
 class StepsViewControllerTests: XCTestCase {
     
     struct Constants {
-        static let jsonRoute = response!//(response["routes"] as! [AnyObject]).first as! [String: Any]
+        static let jsonRoute = response//(response["routes"] as! [AnyObject]).first as! [String: Any]
         static let accessToken = "nonsense"
     }
     
