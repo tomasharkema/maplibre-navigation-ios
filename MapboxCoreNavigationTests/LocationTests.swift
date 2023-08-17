@@ -60,7 +60,7 @@ class LocationTests: XCTestCase {
         let progress = setup.progress
         let firstLocation = setup.firstLocation
         
-        let calculatedCourse = firstLocation.interpolatedCourse(along: progress.currentLegProgress.currentStepProgress.step.coordinates!)!
+        let calculatedCourse = firstLocation.interpolatedCourse(along: progress.currentLegProgress.currentStepProgress.step.shape!.coordinates)!
         let initialHeadingOnFirstStep = progress.currentLegProgress.currentStepProgress.step.finalHeading!
         XCTAssertTrue(calculatedCourse - initialHeadingOnFirstStep < 1, "At the beginning of the route, the final heading of the departure step should be very similar to the caclulated course of the first location update.")
     }

@@ -25,7 +25,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/flitsmeister/mapbox-directions-swift.git", branch: "feature/spm"),
+        .package(url: "https://github.com/mapbox/mapbox-directions-swift.git", from: "2.9.1"),
         .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution.git", from: "5.13.0"),
         .package(url: "https://github.com/mapbox/MapboxGeocoder.swift.git", from: "0.15.0"),
         .package(url: "https://github.com/mapbox/turf-swift.git", from: "2.6.0"),

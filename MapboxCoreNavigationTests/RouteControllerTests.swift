@@ -16,10 +16,10 @@ extension Bundle {
 class RouteControllerTests: XCTestCase {
 
     struct Constants {
-        static let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
+        static let jsonRoute = response
         static let accessToken = "nonsense"
     }
-    let directionsClientSpy = DirectionsSpy(accessToken: "garbage", host: nil)
+    let directionsClientSpy = DirectionsSpy(credentials: Credentials(accessToken: "garbage", host: nil))
     let delegate = RouteControllerDelegateSpy()
 
     typealias RouteLocations = (firstLocation: CLLocation, penultimateLocation: CLLocation, lastLocation: CLLocation)
@@ -34,10 +34,10 @@ class RouteControllerTests: XCTestCase {
         let firstLocation = CLLocation(coordinate: firstCoord, altitude: 5, horizontalAccuracy: 10, verticalAccuracy: 5, course: 20, speed: 4, timestamp: Date())
 
         let remainingStepCount = legProgress.remainingSteps.count
-        let penultimateCoord = legProgress.remainingSteps[remainingStepCount - 2].coordinates!.first!
+        let penultimateCoord = legProgress.remainingSteps[remainingStepCount - 2].shape!.coordinates.first!
         let penultimateLocation = CLLocation(coordinate: penultimateCoord, altitude: 5, horizontalAccuracy: 10, verticalAccuracy: 5, course: 20, speed: 4, timestamp: Date())
 
-        let lastCoord = legProgress.remainingSteps.last!.coordinates!.first!
+        let lastCoord = legProgress.remainingSteps.last!.shape!.coordinates.first!
         let lastLocation = CLLocation(coordinate: lastCoord, altitude: 5, horizontalAccuracy: 10, verticalAccuracy: 5, course: 20, speed: 4, timestamp: Date())
 
         let routeLocations = RouteLocations(firstLocation, penultimateLocation, lastLocation)
@@ -48,16 +48,16 @@ class RouteControllerTests: XCTestCase {
     lazy var initialRoute: Route = {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-        let route = Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        route.accessToken = Constants.accessToken
+        let route = Constants.jsonRoute.routes!.first! //Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+//        route.accessToken = Constants.accessToken
         return route
     }()
 
     lazy var alternateRoute: Route = {
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.893922, longitude: -77.023900))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.880727, longitude: -77.024888))
-        let route = Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        route.accessToken = Constants.accessToken
+        let route = Constants.jsonRoute.routes!.first!//Route(json: Constants.jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+//        route.accessToken = Constants.accessToken
         return route
     }()
 
@@ -93,7 +93,7 @@ class RouteControllerTests: XCTestCase {
         XCTAssertTrue(navigation.userIsOnRoute(firstLocation), "User should be on route")
         XCTAssertEqual(navigation.routeProgress.currentLegProgress.stepIndex, 0, "User is on first step")
 
-        let futureCoordinate = navigation.routeProgress.currentLegProgress.leg.steps[2].coordinates![10]
+        let futureCoordinate = navigation.routeProgress.currentLegProgress.leg.steps[2].shape!.coordinates[10]
         let futureLocation = CLLocation(latitude: futureCoordinate.latitude, longitude: futureCoordinate.longitude)
 
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [futureLocation])
@@ -115,11 +115,11 @@ class RouteControllerTests: XCTestCase {
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocation])
         XCTAssertEqual(navigation.location!.coordinate, firstLocation.coordinate, "Check snapped location is working")
         
-        let firstCoordinateOnUpcomingStep = navigation.routeProgress.currentLegProgress.upComingStep!.coordinates!.first!
+        let firstCoordinateOnUpcomingStep = navigation.routeProgress.currentLegProgress.upComingStep!.shape!.coordinates.first!
         let firstLocationOnNextStepWithNoSpeed = CLLocation(coordinate: firstCoordinateOnUpcomingStep, altitude: 0, horizontalAccuracy: 10, verticalAccuracy: 10, course: 10, speed: 0, timestamp: Date())
         
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocationOnNextStepWithNoSpeed])
-        XCTAssertEqual(navigation.location!.coordinate, navigation.routeProgress.currentLegProgress.currentStep.coordinates!.last!, "When user is not moving, snap to current leg only")
+        XCTAssertEqual(navigation.location!.coordinate, navigation.routeProgress.currentLegProgress.currentStep.shape!.coordinates.last!, "When user is not moving, snap to current leg only")
         
         let firstLocationOnNextStepWithSpeed = CLLocation(coordinate: firstCoordinateOnUpcomingStep, altitude: 0, horizontalAccuracy: 10, verticalAccuracy: 10, course: 10, speed: 5, timestamp: Date())
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocationOnNextStepWithSpeed])
@@ -133,13 +133,13 @@ class RouteControllerTests: XCTestCase {
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocation])
         XCTAssertEqual(navigation.location!.coordinate, firstLocation.coordinate, "Check snapped location is working")
         
-        let firstCoordinateOnUpcomingStep = navigation.routeProgress.currentLegProgress.upComingStep!.coordinates!.first!
+        let firstCoordinateOnUpcomingStep = navigation.routeProgress.currentLegProgress.upComingStep!.shape!.coordinates.first!
         
         let finalHeading = navigation.routeProgress.currentLegProgress.upComingStep!.finalHeading!
         let firstLocationOnNextStepWithDifferentCourse = CLLocation(coordinate: firstCoordinateOnUpcomingStep, altitude: 0, horizontalAccuracy: 30, verticalAccuracy: 10, course: -finalHeading, speed: 5, timestamp: Date())
         
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocationOnNextStepWithDifferentCourse])
-        XCTAssertEqual(navigation.location!.coordinate, navigation.routeProgress.currentLegProgress.currentStep.coordinates!.last!, "When user's course is dissimilar from the finalHeading, they should not snap to upcoming step")
+        XCTAssertEqual(navigation.location!.coordinate, navigation.routeProgress.currentLegProgress.currentStep.shape!.coordinates.last!, "When user's course is dissimilar from the finalHeading, they should not snap to upcoming step")
         
         let firstLocationOnNextStepWithCorrectCourse = CLLocation(coordinate: firstCoordinateOnUpcomingStep, altitude: 0, horizontalAccuracy: 30, verticalAccuracy: 10, course: finalHeading, speed: 5, timestamp: Date())
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocationOnNextStepWithCorrectCourse])
@@ -152,7 +152,7 @@ class RouteControllerTests: XCTestCase {
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocation])
         XCTAssertEqual(navigation.location!.coordinate, firstLocation.coordinate, "Check snapped location is working")
 
-        let futureCoord = Polyline(navigation.routeProgress.currentLegProgress.nearbyCoordinates).coordinateFromStart(distance: 100)!
+        let futureCoord = LineString(navigation.routeProgress.currentLegProgress.nearbyCoordinates).coordinateFromStart(distance: 100)!
         let futureInaccurateLocation = CLLocation(coordinate: futureCoord, altitude: 0, horizontalAccuracy: 1, verticalAccuracy: 200, course: 0, speed: 5, timestamp: Date())
 
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [futureInaccurateLocation])
@@ -161,18 +161,20 @@ class RouteControllerTests: XCTestCase {
 
     func testUserPuckShouldFaceBackwards() {
         // This route is a simple straight line: http://geojson.io/#id=gist:anonymous/64cfb27881afba26e3969d06bacc707c&map=17/37.77717/-122.46484
-        let response = Fixture.JSONFromFileNamed(name: "straight-line", bundle: .module)
-        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-        let directions = Directions(accessToken: "pk.feedCafeDeadBeefBadeBede")
-        let route = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+        let options = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+        let route = Fixture.JSONFromFileNamed(name: "straight-line", bundle: .module, options: options, Route.self)!
+//        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
 
-        route.accessToken = "foo"
+//        let directions = Directions(accessToken: "pk.feedCafeDeadBeefBadeBede")
+//        let route = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+
+//        route.accessToken = "foo"
         let navigation = RouteController(along: route, directions: directions)
         let firstCoord = navigation.routeProgress.currentLegProgress.nearbyCoordinates.first!
         let firstLocation = CLLocation(latitude: firstCoord.latitude, longitude: firstCoord.longitude)
-        let coordNearStart = Polyline(navigation.routeProgress.currentLegProgress.nearbyCoordinates).coordinateFromStart(distance: 10)!
+        let coordNearStart = LineString(navigation.routeProgress.currentLegProgress.nearbyCoordinates).coordinateFromStart(distance: 10)!
 
         navigation.locationManager(navigation.locationManager, didUpdateLocations: [firstLocation])
 
@@ -210,7 +212,7 @@ class RouteControllerTests: XCTestCase {
 
     // MARK: - Events & Delegation
 
-    func testReroutingFromALocationSendsEvents() {
+    func testReroutingFromALocationSendsEvents() throws {
         let routeController = dependencies.routeController
         let testLocation = dependencies.routeLocations.firstLocation
 
@@ -237,7 +239,9 @@ class RouteControllerTests: XCTestCase {
         wait(for: [willRerouteNotificationExpectation], timeout: 0.1)
 
         // MARK: Upon rerouting successfully...
-        directionsClientSpy.fireLastCalculateCompletion(with: nil, routes: [alternateRoute], error: nil)
+        let response = try JSONDecoder().decode(RouteResponse.self, from: Data())
+        // [alternateRoute]
+        directionsClientSpy.fireLastCalculateCompletion(with: (routeOptions, Credentials()), result: .success(response))
 
         // MARK: It tells the delegate & posts a didReroute notification
         XCTAssertTrue(delegate.recentMessages.contains("routeController(_:didRerouteAlong:reason:)"))

@@ -12,10 +12,10 @@
     {
       "identity" : "mapbox-directions-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flitsmeister/mapbox-directions-swift.git",
+      "location" : "https://github.com/mapbox/mapbox-directions-swift.git",
       "state" : {
-        "branch" : "feature/spm",
-        "revision" : "026b43b46c08f47bf9631649551f774e1224c18f"
+        "revision" : "040dcdf5396714788035ce93569a98d109373a97",
+        "version" : "2.11.0"
       }
     },
     {
@@ -61,6 +61,15 @@
       "state" : {
         "revision" : "c2b96f2d5fb7f835b91cefac5e83101f54643901",
         "version" : "3.0.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "8f4d2753f0e4778c76d5f05ad16c74f707390531",
+        "version" : "1.2.3"
       }
     },
     {

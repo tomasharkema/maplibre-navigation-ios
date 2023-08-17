@@ -42,7 +42,7 @@ open class ManeuverView: UIView {
     /**
      The current instruction displayed in the maneuver view.
      */
-    @objc public var visualInstruction: VisualInstruction? {
+    public var visualInstruction: VisualInstruction? {
         didSet {
             setNeedsDisplay()
         }
@@ -51,7 +51,7 @@ open class ManeuverView: UIView {
     /**
      This indicates the side of the road currently driven on.
      */
-    @objc public var drivingSide: DrivingSide = .right {
+    public var drivingSide: DrivingSide = .right {
         didSet {
             setNeedsDisplay()
         }
@@ -95,7 +95,7 @@ open class ManeuverView: UIView {
             ManeuversStyleKit.drawFork(frame: bounds, resizing: resizing, primaryColor: primaryColor, secondaryColor: secondaryColor)
             flip = [.left, .slightLeft, .sharpLeft].contains(direction)
         case .takeRoundabout, .turnAtRoundabout, .takeRotary:
-            ManeuversStyleKit.drawRoundabout(frame: bounds, resizing: resizing, primaryColor: primaryColor, secondaryColor: secondaryColor, roundabout_angle: CGFloat(visualInstruction.finalHeading))
+            ManeuversStyleKit.drawRoundabout(frame: bounds, resizing: resizing, primaryColor: primaryColor, secondaryColor: secondaryColor, roundabout_angle: CGFloat(visualInstruction.finalHeading ?? 0 ))
             flip = drivingSide == .left
             
         case .arrive:

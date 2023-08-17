@@ -1,7 +1,6 @@
 import Foundation
 import MapboxDirections
 
-@objc(MBDirectionsSpy)
 class DirectionsSpy: Directions {
     
     var lastCalculateOptionsCompletion: RouteCompletionHandler?
@@ -21,13 +20,12 @@ class DirectionsSpy: Directions {
         return DummyURLSessionDataTask()
     }
     
-    public func fireLastCalculateCompletion(with waypoints: [Waypoint]?, routes: [Route]?, error: NSError?) {
+    public func fireLastCalculateCompletion(with session: Session, result: Result<RouteResponse, DirectionsError>) {
         guard let lastCalculateOptionsCompletion = lastCalculateOptionsCompletion else {
             assert(false, "Can't fire a completion handler which doesn't exist!")
             return
         }
-
-        lastCalculateOptionsCompletion(waypoints, routes, error)
+        lastCalculateOptionsCompletion(session, result)
     }
     
     public func reset() {

@@ -18,6 +18,6 @@ extension Route {
         }
         let routeOptions = NavigationRouteOptions(waypoints: convertedWaypoints)
         routeOptions.shapeFormat = polylineShapeFormat
-        self.init(json: Fixture.JSONFromFileNamed(name: jsonFileName, bundle: .module), waypoints: convertedWaypoints, options: routeOptions)
+        self.init(jsonFileName: jsonFileName, waypoints: waypoints, accessToken: accessToken)
     }
 }

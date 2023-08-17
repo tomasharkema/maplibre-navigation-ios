@@ -1,5 +1,4 @@
 import MapboxDirections
-import MapboxDirectionsObjc
 import Foundation
 import CoreLocation
 
@@ -21,7 +20,7 @@ extension RouteOptions {
      */
     public func without(waypoint: Waypoint) -> RouteOptions {
         let waypointsWithoutSpecified = waypoints.filter { $0 != waypoint }
-        let copy = self.copy() as! RouteOptions
+        let copy = self //.copy() as! RouteOptions
         copy.waypoints = waypointsWithoutSpecified
         
         return copy

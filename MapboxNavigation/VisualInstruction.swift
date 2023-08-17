@@ -6,7 +6,13 @@ import CarPlay
 extension VisualInstruction {
     
     var containsLaneIndications: Bool {
-        return components.contains(where: { $0 is LaneIndicationComponent })
+        return components.contains(where: {
+            if case VisualInstruction.Component.lane = $0 {
+                return true
+            } else {
+                return false
+            }
+        })
     }
 
 #if canImport(CarPlay)

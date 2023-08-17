@@ -4,6 +4,7 @@ import MapboxDirections
 import CoreLocation
 
 class RouteControllerDelegateSpy: RouteControllerDelegate {
+
     private(set) var recentMessages: [String] = []
 
     public func reset() {
@@ -44,5 +45,10 @@ class RouteControllerDelegateSpy: RouteControllerDelegate {
     internal func routeController(_ routeController: RouteController, shouldPreventReroutesWhenArrivingAt waypoint: Waypoint) -> Bool {
         recentMessages.append(#function)
         return true
+    }
+    
+    func routeControllerShouldDisableBatteryMonitoring(_ routeController: MapboxCoreNavigation.RouteController) -> Bool {
+        recentMessages.append(#function)
+        return false
     }
 }

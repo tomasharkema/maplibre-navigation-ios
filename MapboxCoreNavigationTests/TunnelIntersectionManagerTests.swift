@@ -12,16 +12,17 @@ struct TunnelDetectorTestData {
     static let endLocation = CLLocationCoordinate2D(latitude: 38.88061238536352, longitude: -77.02471810711819)
 }
 
-let tunnelResponse = Fixture.JSONFromFileNamed(name: TunnelDetectorTestData.ninthStreetFileName, bundle: .module)
-let tunnelJsonRoute = (tunnelResponse[TunnelDetectorTestData.kRouteKey] as! [AnyObject]).first as! [String: Any]
 let tunnelWayPoint1 = Waypoint(coordinate: TunnelDetectorTestData.startLocation)
 let tunnelWaypoint2 = Waypoint(coordinate: TunnelDetectorTestData.endLocation)
-let tunnelRoute = Route(json: tunnelJsonRoute, waypoints: [tunnelWayPoint1, tunnelWaypoint2], options: NavigationRouteOptions(waypoints: [tunnelWayPoint1, tunnelWaypoint2]))
+let tunnelOptions = NavigationRouteOptions(waypoints: [tunnelWayPoint1, tunnelWaypoint2])
+let tunnelRoute = Fixture.JSONFromFileNamed(name: TunnelDetectorTestData.ninthStreetFileName, bundle: .module, options: tunnelOptions, Route.self)!
+//let tunnelJsonRoute = (tunnelResponse[TunnelDetectorTestData.kRouteKey] as! [AnyObject]).first as! [String: Any]
+//let tunnelRoute = Route(json: tunnelJsonRoute, waypoints: [tunnelWayPoint1, tunnelWaypoint2], options: NavigationRouteOptions(waypoints: [tunnelWayPoint1, tunnelWaypoint2]))
 
 class TunnelIntersectionManagerTests: XCTestCase {
     
     lazy var tunnelSetup: (tunnelIntersectionManager: TunnelIntersectionManager, routeController: RouteController, firstLocation: CLLocation) = {
-        tunnelRoute.accessToken = "foo"
+//        tunnelRoute.accessToken = "foo"
         let navigation = RouteController(along: tunnelRoute, directions: directions)
         let firstCoord = navigation.routeProgress.currentLegProgress.nearbyCoordinates.first!
         let tunnelIntersectionManager = TunnelIntersectionManager()
@@ -135,7 +136,10 @@ class TunnelIntersectionManagerTests: XCTestCase {
         
         routeController.locationManager(routeController.locationManager, didUpdateLocations: [currentLocation])
         
-        let upcomingIntersection = routeController.routeProgress.currentLegProgress.currentStepProgress.upcomingIntersection!
+        guard let upcomingIntersection = routeController.routeProgress.currentLegProgress.currentStepProgress.upcomingIntersection else {
+            XCTFail("Should not be nil")
+            return
+        }
         let tunnelLocation = location(at: upcomingIntersection.location, horizontalAccuracy: 20)
         
         routeController.locationManager(routeController.locationManager, didUpdateLocations: [tunnelLocation])
@@ -191,7 +195,7 @@ extension TunnelIntersectionManagerTests {
                                intersection: Intersection,
                                    distance: CLLocationDistance? = 200) -> CLLocation {
         
-        let polyline = Polyline(routeController.routeProgress.currentLegProgress.currentStep.coordinates!)
+        let polyline = LineString(routeController.routeProgress.currentLegProgress.currentStep.shape!.coordinates)
         let newLocation = CLLocationCoordinate2D(latitude: coordinate.latitude,
                                                 longitude: coordinate.longitude).coordinate(
                                                        at: distance!,

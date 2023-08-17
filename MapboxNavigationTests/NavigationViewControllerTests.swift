@@ -5,8 +5,8 @@ import Turf
 @testable import MapboxNavigation
 import TestHelpers
 
-let response = Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module)
-let otherResponse = Fixture.JSONFromFileNamed(name: "route-for-lane-testing", bundle: .module)
+let response = Fixture.JSONFromFileNamed(name: "route-with-instructions", bundle: .module, options: NavigationRouteOptions(waypoints: []), Route.self)
+let otherResponse = Fixture.JSONFromFileNamed(name: "route-for-lane-testing", bundle: .module, options: NavigationRouteOptions(waypoints: []), Route.self)
 
 class NavigationViewControllerTests: XCTestCase {
     
@@ -17,9 +17,11 @@ class NavigationViewControllerTests: XCTestCase {
     lazy var dependencies: (navigationViewController: NavigationViewController, startLocation: CLLocation, poi: [CLLocation], endLocation: CLLocation, voice: RouteVoiceController) = {
     
         let voice = FakeVoiceController()
-        let nav = NavigationViewController(for: initialRoute,
-                                           directions: Directions(accessToken: "garbage", host: nil),
-                                           voiceController: voice)
+        let nav = NavigationViewController(
+            for: initialRoute,
+            directions: Directions(credentials: Credentials(accessToken: "garbage", host: nil)),
+            voiceController: voice
+        )
         
         nav.delegate = self
         
@@ -36,30 +38,30 @@ class NavigationViewControllerTests: XCTestCase {
         poi.append(location(at: turkStreetIntersection.location))
         poi.append(location(at: fultonStreetIntersection.location))
         
-        let lastCoord    = routeController.routeProgress.currentLegProgress.remainingSteps.last!.coordinates!.first!
+        let lastCoord    = routeController.routeProgress.currentLegProgress.remainingSteps.last!.shape!.coordinates.first!
         let lastLocation = location(at: lastCoord)
         
         return (navigationViewController: nav, startLocation: firstLocation, poi: poi, endLocation: lastLocation, voice: voice)
     }()
     
     lazy var initialRoute: Route = {
-        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
+//        let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String: Any]
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        
-        route.accessToken = "foo"
+//        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+        let route = response!
+//        route.accessToken = "foo"
         
         return route
     }()
     
     lazy var newRoute: Route = {
-        let jsonRoute = (otherResponse["routes"] as! [AnyObject]).first as! [String: Any]
+//        let jsonRoute = (otherResponse["routes"] as! [AnyObject]).first as! [String: Any]
         let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.901166, longitude: -77.036548))
         let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 38.900206, longitude: -77.033792))
-        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
-        
-        route.accessToken = "bar"
+//        let route     = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+        let route = response!
+//        route.accessToken = "bar"
         
         return route
     }()
@@ -92,7 +94,7 @@ class NavigationViewControllerTests: XCTestCase {
     func testNavigationShouldNotCallStyleManagerDidRefreshAppearanceMoreThanOnceWithOneStyle() {
         let navigationViewController = NavigationViewController(
             for: initialRoute,
-            directions: Directions(accessToken: " "),
+            directions: Directions(credentials: Credentials(accessToken: " ")),
             styles: [DayStyle()], voiceController: FakeVoiceController())
         let routeController = navigationViewController.routeController!
         navigationViewController.styleManager.delegate = self
@@ -111,7 +113,7 @@ class NavigationViewControllerTests: XCTestCase {
     func testNavigationShouldNotCallStyleManagerDidRefreshAppearanceWhenOnlyOneStyle() {
         let navigationViewController = NavigationViewController(
             for: initialRoute,
-            directions: Directions(accessToken: " "),
+            directions: Directions(credentials: Credentials(accessToken: " ")),
             styles: [NightStyle()], voiceController: FakeVoiceController())
         let routeController = navigationViewController.routeController!
         navigationViewController.styleManager.delegate = self
@@ -129,7 +131,7 @@ class NavigationViewControllerTests: XCTestCase {
     func testNavigationShouldNotCallStyleManagerDidRefreshAppearanceMoreThanOnceWithTwoStyles() {
         let navigationViewController = NavigationViewController(
             for: initialRoute,
-            directions: Directions(accessToken: " "),
+            directions: Directions(credentials: Credentials(accessToken: " ")),
             styles: [DayStyle(), NightStyle()], voiceController: FakeVoiceController())
         let routeController = navigationViewController.routeController!
         navigationViewController.styleManager.delegate = self
@@ -188,7 +190,7 @@ class NavigationViewControllerTests: XCTestCase {
         let styleLoaded = XCTestExpectation(description: "Style Loaded")
         let navigationViewController = NavigationViewControllerTestable(
             for: initialRoute,
-            directions: Directions(accessToken: " "),
+            directions: Directions(credentials: Credentials(accessToken: " ")),
             styles: [TestableDayStyle()], styleLoaded: styleLoaded)
         
         //wait for the style to load -- routes won't show without it.
@@ -201,7 +203,7 @@ class NavigationViewControllerTests: XCTestCase {
         
         guard let annotations = navigationViewController.mapView?.annotations else { return XCTFail("Annotations not found.")}
 
-        let firstDestination = initialRoute.routeOptions.waypoints.last!.coordinate
+        let firstDestination = initialRoute.legSeparators.last!!.coordinate
         let destinations = annotations.filter(annotationFilter(matching: firstDestination))
         XCTAssert(!destinations.isEmpty, "Destination annotation does not exist on map")
     
@@ -209,7 +211,7 @@ class NavigationViewControllerTests: XCTestCase {
         navigationViewController.route = newRoute
         
         guard let newAnnotations = navigationViewController.mapView?.annotations else { return XCTFail("New annotations not found.")}
-        let secondDestination = newRoute.routeOptions.waypoints.last!.coordinate
+        let secondDestination = newRoute.legSeparators.last!!.coordinate
 
         //do we have a destination on the second route?
         let newDestinations = newAnnotations.filter(annotationFilter(matching: secondDestination))
@@ -227,6 +229,7 @@ class NavigationViewControllerTests: XCTestCase {
 }
 
 extension NavigationViewControllerTests: NavigationViewControllerDelegate, StyleManagerDelegate {
+
     func locationFor(styleManager: StyleManager) -> CLLocation? {
         return dependencies.poi.first!
     }
@@ -274,8 +277,7 @@ class NavigationViewControllerTestable: NavigationViewController {
         styleLoadedExpectation = styleLoaded
         super.init(for: route, directions: directions,styles: styles, locationManager: locationManager, voiceController: FakeVoiceController())
     }
-    
-@objc(initWithRoute:directions:styles:routeController:locationManager:voiceController:)
+
     required init(for route: Route, directions: Directions, styles: [Style]?, routeController: RouteController?, locationManager: NavigationLocationManager?, voiceController: RouteVoiceController?) {
         fatalError("init(for:directions:styles:routeController:locationManager:voiceController:) is not supported in this testing subclass.")
     }

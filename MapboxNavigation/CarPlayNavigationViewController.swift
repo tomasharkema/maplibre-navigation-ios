@@ -16,9 +16,9 @@ public class CarPlayNavigationViewController: UIViewController, MGLMapViewDelega
     /**
      The view controller’s delegate.
      */
-    @objc public weak var carPlayNavigationDelegate: CarPlayNavigationDelegate?
+    public weak var carPlayNavigationDelegate: CarPlayNavigationDelegate?
     
-    @objc public var drivingSide: DrivingSide = .right
+    public var drivingSide: DrivingSide = .right
     
     var routeController: RouteController
     var mapView: NavigationMapView?
@@ -144,7 +144,7 @@ public class CarPlayNavigationViewController: UIViewController, MGLMapViewDelega
     /**
      Shows the interface for providing feedback about the route.
      */
-    @objc public func showFeedback() {
+    public func showFeedback() {
         carInterfaceController.pushTemplate(self.carFeedbackTemplate, animated: true)
     }
     
@@ -153,7 +153,7 @@ public class CarPlayNavigationViewController: UIViewController, MGLMapViewDelega
      
      When this property is true, the map follows the user’s location and rotates when their course changes. Otherwise, the map shows an overview of the route.
      */
-    @objc public var tracksUserCourse: Bool {
+    public var tracksUserCourse: Bool {
         get {
             return mapView?.tracksUserCourse ?? false
         }
@@ -168,7 +168,7 @@ public class CarPlayNavigationViewController: UIViewController, MGLMapViewDelega
                     return
                 }
                 mapView?.enableFrameByFrameCourseViewTracking(for: 3)
-                mapView?.setOverheadCameraView(from: userLocation, along: routeController.routeProgress.route.coordinates!, for: self.edgePadding)
+                mapView?.setOverheadCameraView(from: userLocation, along: routeController.routeProgress.route.shape!.coordinates, for: self.edgePadding)
             }
         }
     }
@@ -370,6 +370,34 @@ extension CarPlayNavigationViewController: RouteControllerDelegate {
         }
         return false
     }
+
+    public func routeController(_ routeController: RouteController, shouldPreventReroutesWhenArrivingAt waypoint: Waypoint) -> Bool {
+        return false
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, shouldRerouteFrom location: CLLocation) -> Bool {
+        false
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, willRerouteFrom location: CLLocation) {
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, shouldDiscard location: CLLocation) -> Bool {
+        false
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, didRerouteAlong route: MapboxDirections.Route, reason: MapboxCoreNavigation.RouteController.RerouteReason) {
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, didFailToRerouteWith error: Error) {
+    }
+
+    public func routeController(_ routeController: MapboxCoreNavigation.RouteController, didUpdate locations: [CLLocation]) {
+    }
+
+    public func routeControllerShouldDisableBatteryMonitoring(_ routeController: MapboxCoreNavigation.RouteController) -> Bool {
+        false
+    }
 }
 
 /**
@@ -392,6 +420,6 @@ public protocol CarPlayNavigationDelegate {
 
      - parameter carPlayNavigationViewController: The CarPlay navigation view controller that was dismissed.
      */
-    @objc func carPlayNavigationViewControllerDidArrive(_ carPlayNavigationViewController: CarPlayNavigationViewController)
+    func carPlayNavigationViewControllerDidArrive(_ carPlayNavigationViewController: CarPlayNavigationViewController)
 }
 #endif

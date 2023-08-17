@@ -5,12 +5,13 @@ import Turf
 import CoreLocation
 import TestHelpers
 
-let response = Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module)
-let jsonRoute = (response["routes"] as! [AnyObject]).first as! [String : Any]
+
 let waypoint1 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165))
 let waypoint2 = Waypoint(coordinate: CLLocationCoordinate2D(latitude: 37.7727, longitude: -122.433378))
-let directions = Directions(accessToken: "pk.feedCafeDeadBeefBadeBede")
-let route = Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
+let routeOptions = NavigationRouteOptions(waypoints: [waypoint1, waypoint2])
+let response = Fixture.JSONFromFileNamed(name: "routeWithInstructions", bundle: .module, options: routeOptions, RouteResponse.self)!
+let directions = Directions(credentials: Credentials(accessToken: "pk.feedCafeDeadBeefBadeBede"))
+let route = response.routes!.first! //Route(json: jsonRoute, waypoints: [waypoint1, waypoint2], options: NavigationRouteOptions(waypoints: [waypoint1, waypoint2]))
 
 let waitForInterval: TimeInterval = 5
 
@@ -20,7 +21,7 @@ class MapboxCoreNavigationTests: XCTestCase {
     var navigation: RouteController!
     
     func testDepart() {
-        route.accessToken = "foo"
+//        route.accessToken = "foo"
         navigation = RouteController(along: route, directions: directions)
         let depart = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 37.795042, longitude: -122.413165), altitude: 1, horizontalAccuracy: 1, verticalAccuracy: 1, course: 0, speed: 10, timestamp: Date())
         
@@ -41,12 +42,12 @@ class MapboxCoreNavigationTests: XCTestCase {
     }
     
     func testNewStep() {
-        route.accessToken = "foo"
+//        route.accessToken = "foo"
         let location = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 37.78895, longitude: -122.42543), altitude: 1, horizontalAccuracy: 1, verticalAccuracy: 1, course: 171, speed: 10, timestamp: Date())
         let locationManager = ReplayLocationManager(locations: [location, location])
         navigation = RouteController(along: route, directions: directions, locationManager: locationManager)
         
-        expectation(forNotification: .routeControllerDidPassSpokenInstructionPoint, object: navigation) { (notification) -> Bool in
+        let exp = expectation(forNotification: .routeControllerDidPassSpokenInstructionPoint, object: navigation) { (notification) -> Bool in
             XCTAssertEqual(notification.userInfo?.count, 1)
             
             let routeProgress = notification.userInfo![RouteControllerNotificationUserInfoKey.routeProgressKey] as? RouteProgress
@@ -56,13 +57,11 @@ class MapboxCoreNavigationTests: XCTestCase {
         
         navigation.resume()
         
-        waitForExpectations(timeout: waitForInterval) { (error) in
-            XCTAssertNil(error)
-        }
+        wait(for: [exp], timeout: waitForInterval)
     }
     
     func testJumpAheadToLastStep() {
-        route.accessToken = "foo"
+//        route.accessToken = "foo"
         let location = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 37.77386, longitude: -122.43085), altitude: 1, horizontalAccuracy: 1, verticalAccuracy: 1, course: 171, speed: 10, timestamp: Date())
         
         let locationManager = ReplayLocationManager(locations: [location, location])
@@ -84,7 +83,7 @@ class MapboxCoreNavigationTests: XCTestCase {
     }
     
     func testShouldReroute() {
-        route.accessToken = "foo"
+//        route.accessToken = "foo"
         let firstLocation = CLLocation(coordinate: CLLocationCoordinate2D(latitude: 38, longitude: -123),
                                        altitude: 0, horizontalAccuracy: 0, verticalAccuracy: 0, course: 0, speed: 0,
                                        timestamp: Date())
@@ -111,8 +110,8 @@ class MapboxCoreNavigationTests: XCTestCase {
     }
     
     func testArrive() {
-        route.accessToken = "foo"
-        let locations: [CLLocation] = route.legs.first!.steps.first!.coordinates!.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
+//        route.accessToken = "foo"
+        let locations: [CLLocation] = route.legs.first!.steps.first!.shape!.coordinates.map { CLLocation(latitude: $0.latitude, longitude: $0.longitude) }
         let locationManager = ReplayLocationManager(locations: locations)
         locationManager.speedMultiplier = 20
         
@@ -132,8 +131,9 @@ class MapboxCoreNavigationTests: XCTestCase {
     }
     
     func testFailToReroute() {
-        route.accessToken = "foo"
-        let directionsClientSpy = DirectionsSpy(accessToken: "garbage", host: nil)
+//        route.accessToken = "foo"
+        let creds = Credentials(accessToken: "garbage", host: nil)
+        let directionsClientSpy = DirectionsSpy(credentials: creds)
         navigation = RouteController(along: route, directions: directionsClientSpy)
         
         expectation(forNotification: .routeControllerWillReroute, object: navigation) { (notification) -> Bool in
@@ -145,8 +145,8 @@ class MapboxCoreNavigationTests: XCTestCase {
         }
         
         navigation.rerouteForDiversion(from: CLLocation(latitude: 0, longitude: 0), along: navigation.routeProgress)
-        directionsClientSpy.fireLastCalculateCompletion(with: nil, routes: nil, error: NSError())
-        
+//        directionsClientSpy.fireLastCalculateCompletion(with: nil, routes: nil, error: NSError())
+        directionsClientSpy.fireLastCalculateCompletion(with: (routeOptions, creds), result: .failure(.noData))
         waitForExpectations(timeout: 2) { (error) in
             XCTAssertNil(error)
         }

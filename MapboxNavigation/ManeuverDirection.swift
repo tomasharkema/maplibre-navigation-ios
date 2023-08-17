@@ -22,6 +22,6 @@ extension ManeuverDirection {
         default:
             description = "straight"
         }
-        self.init(description: description)!
+        self.init(rawValue: description)!
     }
 }

@@ -41,9 +41,9 @@ open class SimulatedLocationManager: NavigationLocationManager {
     /**
      Specify the multiplier to use when calculating speed based on the RouteLeg’s `expectedSegmentTravelTimes`.
      */
-    @objc public var speedMultiplier: Double = 1
+    public var speedMultiplier: Double = 1
     
-    @objc override open var location: CLLocation? {
+    override open var location: CLLocation? {
         get {
             return currentLocation
         }
@@ -74,7 +74,7 @@ open class SimulatedLocationManager: NavigationLocationManager {
      - parameter route: The initial route.
      - returns: A `SimulatedLocationManager`
      */
-    @objc public init(route: Route) {
+    public init(route: Route) {
         super.init()
         initializeSimulatedLocationManager(for: route, currentDistance: 0, currentSpeed: 30)
     }
@@ -85,7 +85,7 @@ open class SimulatedLocationManager: NavigationLocationManager {
      - parameter routeProgress: The routeProgress of the current route.
      - returns: A `SimulatedLocationManager`
      */
-    @objc public init(routeProgress: RouteProgress) {
+    public init(routeProgress: RouteProgress) {
         super.init()
         let currentDistance = calculateCurrentDistance(routeProgress.distanceTraveled)
         initializeSimulatedLocationManager(for: routeProgress.route, currentDistance: currentDistance, currentSpeed: 0)
@@ -102,7 +102,7 @@ open class SimulatedLocationManager: NavigationLocationManager {
     }
     
     private func reset() {
-        if let coordinates = route?.coordinates {
+        if let coordinates = route?.shape?.coordinates {
             routeLine = coordinates
             locations = coordinates.simulatedLocationsWithTurnPenalties()
         }
@@ -111,12 +111,14 @@ open class SimulatedLocationManager: NavigationLocationManager {
     private func calculateCurrentDistance(_ distance: CLLocationDistance) -> CLLocationDistance {
         return distance + (currentSpeed * speedMultiplier)
     }
-    
-    @objc private func progressDidChange(_ notification: Notification) {
+
+    @objc
+    private func progressDidChange(_ notification: Notification) {
         routeProgress = notification.userInfo![RouteControllerNotificationUserInfoKey.routeProgressKey] as? RouteProgress
     }
-    
-    @objc private func didReroute(_ notification: Notification) {
+
+    @objc
+    private func didReroute(_ notification: Notification) {
         guard let routeController = notification.object as? RouteController else {
             return
         }
@@ -138,11 +140,12 @@ open class SimulatedLocationManager: NavigationLocationManager {
             NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.tick), object: nil)
         }
     }
-    
-    @objc fileprivate func tick() {
+
+    @objc
+    fileprivate func tick() {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(tick), object: nil)
         
-        let polyline = Polyline(routeLine)
+        let polyline = LineString(routeLine)
         
         guard let newCoordinate = polyline.coordinateFromStart(distance: currentDistance) else {
             return
@@ -156,12 +159,12 @@ open class SimulatedLocationManager: NavigationLocationManager {
         let distanceToClosest = closestLocation.distance(from: CLLocation(newCoordinate))
         
         let distance = min(max(distanceToClosest, 10), safeDistance)
-        let coordinatesNearby = polyline.trimmed(from: newCoordinate, distance: 100).coordinates
+        guard let coordinatesNearby = polyline.trimmed(from: newCoordinate, distance: 100)?.coordinates else { return }
         
         // Simulate speed based on expected segment travel time
         if let expectedSegmentTravelTimes = routeProgress?.currentLeg.expectedSegmentTravelTimes,
-            let coordinates = routeProgress?.route.coordinates,
-            let closestCoordinateOnRoute = Polyline(routeProgress!.route.coordinates!).closestCoordinate(to: newCoordinate),
+           let coordinates = routeProgress?.route.shape?.coordinates,
+           let closestCoordinateOnRoute = LineString(routeProgress!.route.shape!.coordinates).closestCoordinate(to: newCoordinate),
             let nextCoordinateOnRoute = coordinates.after(element: coordinates[closestCoordinateOnRoute.index]),
             let time = expectedSegmentTravelTimes.optional[closestCoordinateOnRoute.index] {
             let distance = coordinates[closestCoordinateOnRoute.index].distance(to: nextCoordinateOnRoute)

@@ -7,12 +7,13 @@ extension Waypoint {
         return CLLocation.init(latitude: coordinate.latitude, longitude: coordinate.longitude)
     }
     
-    var instructionComponent: VisualInstructionComponent? {
+    var instructionComponent: VisualInstruction.Component? {
         guard let name = name else { return nil }
-        return VisualInstructionComponent(type: .text, text: name, imageURL: nil, abbreviation: nil, abbreviationPriority: NSNotFound)
+
+        return VisualInstruction.Component.text(text: VisualInstruction.Component.TextRepresentation(text: name, abbreviation: nil, abbreviationPriority: nil))
     }
     
-    var instructionComponents: [VisualInstructionComponent]? {
+    var instructionComponents: [VisualInstruction.Component]? {
         return (instructionComponent != nil) ? [instructionComponent!] : nil
     }
 }

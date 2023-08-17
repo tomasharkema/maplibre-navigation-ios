@@ -63,14 +63,14 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
         do {
             try unDuckAudio()
         } catch {
-            voiceControllerDelegate?.voiceController?(self, spokenInstructionsDidFailWith: error)
+            voiceControllerDelegate?.voiceController(self, spokenInstructionsDidFailWith: error)
         }
     }
 
     @objc open override func didPassSpokenInstructionPoint(notification: NSNotification) {
-        let routeProgresss = notification.userInfo![RouteControllerNotificationUserInfoKey.routeProgressKey] as! RouteProgress
-        locale = routeProgresss.route.routeOptions.locale
-        let currentLegProgress: RouteLegProgress = routeProgresss.currentLegProgress
+        let routeProgress = notification.userInfo![RouteControllerNotificationUserInfoKey.routeProgressKey] as! RouteProgress
+        locale = routeProgress.route.speechLocale
+        let currentLegProgress: RouteLegProgress = routeProgress.currentLegProgress
 
         for (stepIndex, step) in currentLegProgress.leg.steps.suffix(from: currentLegProgress.stepIndex).enumerated() {
             let adjustedStepIndex = stepIndex + currentLegProgress.stepIndex
@@ -100,9 +100,9 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
      
      The cache is first checked to see if we have already downloaded the speech file. If not, the instruction is fetched and played. If there is an error anywhere along the way, the instruction will be spoken with the default speech synthesizer.
      */
-    @objc open override func speak(_ instruction: SpokenInstruction) {
+    open override func speak(_ instruction: SpokenInstruction) {
         if let audioPlayer = audioPlayer, audioPlayer.isPlaying, let lastSpokenInstruction = lastSpokenInstruction {
-            voiceControllerDelegate?.voiceController?(self, didInterrupt: lastSpokenInstruction, with: instruction)
+            voiceControllerDelegate?.voiceController(self, didInterrupt: lastSpokenInstruction, with: instruction)
         }
         
         audioTask?.cancel()
@@ -115,7 +115,7 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
             return
         }
         
-        let modifiedInstruction = voiceControllerDelegate?.voiceController?(self, willSpeak: instruction, routeProgress: routeProgress!) ?? instruction
+        let modifiedInstruction = voiceControllerDelegate?.voiceController(self, willSpeak: instruction, routeProgress: routeProgress!) ?? instruction
         lastSpokenInstruction = modifiedInstruction
 
         if let data = cachedDataForKey(modifiedInstruction.ssmlText) {
@@ -131,11 +131,11 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
      
      This method should be used in cases where `fetch(instruction:)` or `play(_:)` fails.
      */
-    @objc open func speakWithDefaultSpeechSynthesizer(_ instruction: SpokenInstruction, error: Error?) {
+    open func speakWithDefaultSpeechSynthesizer(_ instruction: SpokenInstruction, error: Error?) {
         audioTask?.cancel()
         
         if let error = error {
-            voiceControllerDelegate?.voiceController?(self, spokenInstructionsDidFailWith: error)
+            voiceControllerDelegate?.voiceController(self, spokenInstructionsDidFailWith: error)
         }
         
         guard let audioPlayer = audioPlayer else {
@@ -151,7 +151,7 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
     /**
      Fetches and plays an instruction.
      */
-    @objc open func fetchAndSpeak(instruction: SpokenInstruction) {
+    open func fetchAndSpeak(instruction: SpokenInstruction) {
         audioTask?.cancel()
         let ssmlText = instruction.ssmlText
         let options = SpeechOptions(ssml: ssmlText)
@@ -182,7 +182,7 @@ open class MapboxVoiceController: RouteVoiceController, AVAudioPlayerDelegate {
     /**
      Caches an instruction in an in-memory cache.
      */
-    @objc open func downloadAndCacheSpokenInstruction(instruction: SpokenInstruction) {
+    open func downloadAndCacheSpokenInstruction(instruction: SpokenInstruction) {
         let ssmlText = instruction.ssmlText
         let options = SpeechOptions(ssml: ssmlText)
         if let locale = locale {

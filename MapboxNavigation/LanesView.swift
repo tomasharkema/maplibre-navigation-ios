@@ -69,7 +69,6 @@ open class LanesView: UIView {
     /**
      Updates the tertiary instructions banner info with a given `VisualInstructionBanner`.
      */
-    @objc(updateForVisualInstructionBanner:)
     public func update(for visualInstruction: VisualInstructionBanner?) {
         clearLaneViews()
         
@@ -79,14 +78,17 @@ open class LanesView: UIView {
                     return
         }
         
-        let laneIndications: [LaneIndicationComponent]? = tertiaryInstruction.components.compactMap({ $0 as? LaneIndicationComponent })
+        let lanes: [(LaneIndication, Bool, ManeuverDirection?)] = tertiaryInstruction.components.compactMap {
+            guard case .lane(let lane, let isUsable, let maneuverDirection) = $0 else { return nil }
+            return (lane, isUsable, maneuverDirection)
+        }
         
-        guard let lanes = laneIndications, !lanes.isEmpty else {
+        guard !lanes.isEmpty else {
             hide()
             return
         }
         
-        let subviews = lanes.map { LaneView(component: $0) }
+        let subviews = lanes.map { LaneView(component: $0.0, isUsable: $0.1, maneuverDirection: $0.2!) }
         stackView.addArrangedSubviews(subviews)
         show()
     }

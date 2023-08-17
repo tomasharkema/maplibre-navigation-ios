@@ -148,7 +148,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate {
         do {
             try mixAudio()
         } catch {
-            voiceControllerDelegate?.voiceController?(self, spokenInstructionsDidFailWith: error)
+            voiceControllerDelegate?.voiceController(self, spokenInstructionsDidFailWith: error)
         }
         rerouteSoundPlayer.play()
     }
@@ -157,7 +157,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate {
         do {
             try unDuckAudio()
         } catch {
-            voiceControllerDelegate?.voiceController?(self, spokenInstructionsDidFailWith: error)
+            voiceControllerDelegate?.voiceController(self, spokenInstructionsDidFailWith: error)
         }
     }
     
@@ -197,13 +197,13 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate {
         assert(routeProgress != nil, "routeProgress should not be nil.")
         
         if speechSynth.isSpeaking, let lastSpokenInstruction = lastSpokenInstruction {
-            voiceControllerDelegate?.voiceController?(self, didInterrupt: lastSpokenInstruction, with: instruction)
+            voiceControllerDelegate?.voiceController(self, didInterrupt: lastSpokenInstruction, with: instruction)
         }
         
         do {
             try duckAudio()
         } catch {
-            voiceControllerDelegate?.voiceController?(self, spokenInstructionsDidFailWith: error)
+            voiceControllerDelegate?.voiceController(self, spokenInstructionsDidFailWith: error)
         }
         
         var utterance: AVSpeechUtterance?
@@ -213,7 +213,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate {
             utterance!.voice = AVSpeechSynthesisVoice(identifier: AVSpeechSynthesisVoiceIdentifierAlex)
         }
         
-        let modifiedInstruction = voiceControllerDelegate?.voiceController?(self, willSpeak: instruction, routeProgress: routeProgress!) ?? instruction
+        let modifiedInstruction = voiceControllerDelegate?.voiceController(self, willSpeak: instruction, routeProgress: routeProgress!) ?? instruction
         
         if #available(iOS 10.0, *), utterance?.voice == nil {
             utterance = AVSpeechUtterance(attributedString: modifiedInstruction.attributedText(for: routeProgress!.currentLegProgress))
@@ -235,8 +235,7 @@ open class RouteVoiceController: NSObject, AVSpeechSynthesizerDelegate {
 /**
  The `VoiceControllerDelegate` protocol defines methods that allow an object to respond to significant events related to spoken instructions.
  */
-@objc(MBVoiceControllerDelegate)
-public protocol VoiceControllerDelegate {
+public protocol VoiceControllerDelegate: AnyObject {
     
     /**
      Called when the voice controller failed to speak an instruction.
@@ -244,8 +243,7 @@ public protocol VoiceControllerDelegate {
      - parameter voiceController: The voice controller that experienced the failure.
      - parameter error: An error explaining the failure and its cause. The `MBSpokenInstructionErrorCodeKey` key of the error’s user info dictionary is a `SpokenInstructionErrorCode` indicating the cause of the failure.
      */
-    @objc(voiceController:spokenInstrucionsDidFailWithError:)
-    optional func voiceController(_ voiceController: RouteVoiceController, spokenInstructionsDidFailWith error: Error)
+    func voiceController(_ voiceController: RouteVoiceController, spokenInstructionsDidFailWith error: Error)
     
     /**
      Called when one spoken instruction interrupts another instruction currently being spoken.
@@ -254,8 +252,7 @@ public protocol VoiceControllerDelegate {
      - parameter interruptedInstruction: The spoken instruction currently in progress that has been interrupted.
      - parameter interruptingInstruction: The spoken instruction that is interrupting the current instruction.
      */
-    @objc(voiceController:didInterruptSpokenInstruction:withInstruction:)
-    optional func voiceController(_ voiceController: RouteVoiceController, didInterrupt interruptedInstruction: SpokenInstruction, with interruptingInstruction: SpokenInstruction)
+    func voiceController(_ voiceController: RouteVoiceController, didInterrupt interruptedInstruction: SpokenInstruction, with interruptingInstruction: SpokenInstruction)
     
     /** Called when a spoken is about to speak. Useful if it is necessary to give a custom instruction instead. Noting, changing the `distanceAlongStep` property on `SpokenInstruction` will have no impact on when the instruction will be said.
      
@@ -263,6 +260,5 @@ public protocol VoiceControllerDelegate {
      - parameter instruction: The spoken instruction that will be said.
      - parameter routeProgress: The `RouteProgress` just before when the instruction is scheduled to be spoken.
      **/
-    @objc(voiceController:willSpeakSpokenInstruction:routeProgress:)
-    optional func voiceController(_ voiceController: RouteVoiceController, willSpeak instruction: SpokenInstruction, routeProgress: RouteProgress) -> SpokenInstruction?
+    func voiceController(_ voiceController: RouteVoiceController, willSpeak instruction: SpokenInstruction, routeProgress: RouteProgress) -> SpokenInstruction?
 }
