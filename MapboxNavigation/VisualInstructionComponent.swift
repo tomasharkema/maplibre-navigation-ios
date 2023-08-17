@@ -5,7 +5,7 @@ extension VisualInstruction.Component {
 
     static let scale = UIScreen.main.scale
 
-    var textRepresentation: TextRepresentation? {
+    public var textRepresentation: TextRepresentation? {
         switch self {
         case .text(let text):
             return text
@@ -24,7 +24,7 @@ extension VisualInstruction.Component {
         }
     }
 
-    var imageURL: URL? {
+    public var imageURL: URL? {
         switch self {
         case .text(let text):
             return nil
@@ -43,15 +43,15 @@ extension VisualInstruction.Component {
         }
     }
 
-    var abbreviation: String? {
+    public var abbreviation: String? {
         textRepresentation?.text
     }
 
-    var abbreviationPriority: Int {
+    public var abbreviationPriority: Int {
         textRepresentation?.abbreviationPriority ?? NSNotFound
     }
 
-    var cacheKey: String? {
+    public var cacheKey: String? {
         switch self {
         case .exit(let text), .exitCode(let text):
             return "exit-\(text.text)-\(VisualInstruction.Component.scale)"
@@ -68,7 +68,7 @@ extension VisualInstruction.Component {
         }
     }
 
-    var genericCacheKey: String {
+    public var genericCacheKey: String {
         return "generic-\(textRepresentation?.text ?? "nil")"
     }
 }
