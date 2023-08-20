@@ -1,6 +1,6 @@
 import Foundation
 import MapboxDirections
-import Polyline
+import PolylineLib
 
 class CoreFeedbackEvent: Hashable {
     var id = UUID()

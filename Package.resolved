@@ -12,10 +12,10 @@
     {
       "identity" : "mapbox-directions-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/flitsmeister/mapbox-directions-swift.git",
+      "location" : "https://github.com/tomasharkema/mapbox-directions-swift.git",
       "state" : {
-        "branch" : "feature/spm-2.11",
-        "revision" : "ee54f3dbea681ef7f7684f56cbf0a6a22c35adfb"
+        "branch" : "feature/module-collision",
+        "revision" : "0e9bf047307d8e3a277dfe6d5cf386ecdde7fd38"
       }
     },
     {
@@ -48,19 +48,19 @@
     {
       "identity" : "polyline",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline",
+      "location" : "https://github.com/tomasharkema/Polyline.git",
       "state" : {
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23",
-        "version" : "5.1.0"
+        "branch" : "feature/module-collision",
+        "revision" : "152a0485ba88045b9c4f8317f3a50c3a43de5855"
       }
     },
     {
       "identity" : "solar",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ceeK/Solar.git",
+      "location" : "https://github.com/tomasharkema/Solar.git",
       "state" : {
-        "revision" : "c2b96f2d5fb7f835b91cefac5e83101f54643901",
-        "version" : "3.0.1"
+        "branch" : "feature/module-collision",
+        "revision" : "3228cc873d701d28c9b8c9750d934445d13a80b3"
       }
     },
     {

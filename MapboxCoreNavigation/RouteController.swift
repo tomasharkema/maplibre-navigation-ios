@@ -1,7 +1,7 @@
 import Foundation
 import CoreLocation
 import MapboxDirections
-import Polyline
+import PolylineLib
 import Turf
 import UIKit
 

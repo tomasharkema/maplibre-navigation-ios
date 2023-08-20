@@ -1,4 +1,4 @@
-import Polyline
+import PolylineLib
 import MapboxDirections
 import AVFoundation
 import UIKit

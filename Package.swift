@@ -27,14 +27,14 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/flitsmeister/mapbox-directions-swift.git", branch: "feature/spm-2.11"),
+        .package(url: "https://github.com/tomasharkema/mapbox-directions-swift.git", branch: "feature/module-collision"),
         .package(url: "https://github.com/maplibre/maplibre-gl-native-distribution.git", from: "5.13.0"),
         .package(url: "https://github.com/mapbox/MapboxGeocoder.swift.git", from: "0.15.0"),
         .package(url: "https://github.com/mapbox/turf-swift.git", from: "2.6.1"),
         .package(url: "https://github.com/mapbox/mapbox-speech-swift.git", from: "2.1.1"),
-        .package(url: "https://github.com/ceeK/Solar.git", from: "3.0.1"),
+        .package(url: "https://github.com/tomasharkema/Solar.git", branch: "feature/module-collision"),
         .package(url: "https://github.com/uber/ios-snapshot-test-case.git", from: "8.0.0"),
-        .package(url: "ttps://github.com/raphaelmor/Polyline.git", from: "5.1.0"),
+        .package(url: "https://github.com/tomasharkema/Polyline.git", branch: "feature/module-collision"),
     ],
     targets: [
         .target(
@@ -42,7 +42,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Turf", package: "turf-swift"),
                 .product(name: "MapboxDirections", package: "mapbox-directions-swift"),
-                .product(name: "Polyline", package: "Polyline"),
+                .product(name: "PolylineLib", package: "Polyline"),
                 "MapboxCoreNavigationObjC",
             ],
             path: "MapboxCoreNavigation"
@@ -57,8 +57,8 @@ let package = Package(
                 "MapboxCoreNavigation",
                 "MapboxNavigationObjC",
                 .product(name: "MapboxSpeech", package: "mapbox-speech-swift"),
-                .product(name: "Solar", package: "Solar"),
-                .product(name: "Polyline", package: "Polyline"),
+                .product(name: "SolarLib", package: "Solar"),
+                .product(name: "PolylineLib", package: "Polyline"),
             ],
             path: "MapboxNavigation"
         ),

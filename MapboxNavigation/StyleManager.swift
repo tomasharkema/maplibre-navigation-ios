@@ -1,5 +1,5 @@
 import UIKit
-import Solar
+import SolarLib
 import CoreLocation
 
 /**

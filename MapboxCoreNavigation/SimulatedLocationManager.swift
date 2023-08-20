@@ -2,7 +2,7 @@ import Foundation
 import MapboxDirections
 import Turf
 import CoreLocation
-import Polyline
+import PolylineLib
 
 fileprivate let maximumSpeed: CLLocationSpeed = 30 // ~108 kmh
 fileprivate let minimumSpeed: CLLocationSpeed = 6 // ~21 kmh
