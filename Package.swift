@@ -34,6 +34,7 @@ let package = Package(
         .package(url: "https://github.com/mapbox/mapbox-speech-swift.git", from: "2.1.1"),
         .package(url: "https://github.com/ceeK/Solar.git", from: "3.0.1"),
         .package(url: "https://github.com/uber/ios-snapshot-test-case.git", from: "8.0.0"),
+        .package(url: "ttps://github.com/raphaelmor/Polyline.git", from: "5.1.0"),
     ],
     targets: [
         .target(
@@ -41,6 +42,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Turf", package: "turf-swift"),
                 .product(name: "MapboxDirections", package: "mapbox-directions-swift"),
+                .product(name: "Polyline", package: "Polyline"),
                 "MapboxCoreNavigationObjC",
             ],
             path: "MapboxCoreNavigation"
@@ -56,6 +58,7 @@ let package = Package(
                 "MapboxNavigationObjC",
                 .product(name: "MapboxSpeech", package: "mapbox-speech-swift"),
                 .product(name: "Solar", package: "Solar"),
+                .product(name: "Polyline", package: "Polyline"),
             ],
             path: "MapboxNavigation"
         ),
