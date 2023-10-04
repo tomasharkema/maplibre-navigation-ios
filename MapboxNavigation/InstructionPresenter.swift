@@ -127,9 +127,13 @@ class InstructionPresenter {
     }
 
     func attributedString(forExitComponent component: VisualInstructionComponent, maneuverDirection: ManeuverDirection, dataSource: DataSource) -> NSAttributedString? {
-        guard component.type == .exitCode, let exitCode = component.text else { return nil }
+        guard component.type == .exitCode, let exitCode = component.text else {
+            return nil
+        }
         let side: ExitSide = maneuverDirection == .left ? .left : .right
-        guard let exitString = exitShield(side: side, text: exitCode, component: component, dataSource: dataSource) else { return nil }
+        guard let exitString = exitShield(side: side, text: exitCode, component: component, dataSource: dataSource) else {
+            return nil
+        }
         return exitString
     }
     
@@ -215,7 +219,9 @@ class InstructionPresenter {
     }
     
     private func exitShield(side: ExitSide = .right, text: String, component: VisualInstructionComponent, dataSource: DataSource) -> NSAttributedString? {
-        guard let cacheKey = component.cacheKey else { return nil }
+        guard let cacheKey = component.cacheKey else {
+            return nil
+        }
         
 
         let additionalKey = ExitView.criticalHash(side: side, dataSource: dataSource)
@@ -226,7 +232,9 @@ class InstructionPresenter {
             attachment.image = image
         } else {
             let view = ExitView(pointSize: dataSource.font.pointSize, side: side, text: text)
-            guard let image = takeSnapshot(on: view) else { return nil }
+            guard let image = takeSnapshot(on: view) else {
+                return nil
+            }
             imageRepository.storeImage(image, forKey: key, toDisk: false)
             attachment.image = image
         }
@@ -248,7 +256,7 @@ class InstructionPresenter {
         if let hostView = dataSource as? UIView, let hostWindow = hostView.window {
             window = hostWindow
         } else {
-            window = UIApplication.shared.delegate!.window!!
+            window = UIApplication.shared.delegate?.window! ?? UIWindow(frame: view.frame)
         }
         
         // Temporarily add the view to the view hierarchy for UIAppearance to work its magic.

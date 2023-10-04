@@ -1,5 +1,7 @@
 import XCTest
+#if !SWIFT_PACKAGE
 @testable import PodInstall
+#endif
 
 class PodInstallTests: XCTestCase {
     

@@ -265,29 +265,29 @@ open class RouteController: NSObject, Router {
     }
     
     // MARK: - Pre-defined routes for testing
-    private lazy var testA12ToVeenendaalNormalWithTraffic = {
-        Route(
-            jsonFileName: "A12-To-Veenendaal-Normal-With-Big-Trafficjam",
-            waypoints: [
-                CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
-                CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
-            ],
-            bundle: .mapboxCoreNavigation,
-            accessToken: "nonsense"
-        )
-    }()
-    
-    private lazy var testA12ToVeenendaalNormal = {
-        Route(
-            jsonFileName: "A12-To-Veenendaal-Normal",
-            waypoints: [
-                CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
-                CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
-            ],
-            bundle: .mapboxCoreNavigation,
-            accessToken: "nonsense"
-        )
-    }()
+//    private lazy var testA12ToVeenendaalNormalWithTraffic = {
+//        Route(
+//            jsonFileName: "A12-To-Veenendaal-Normal-With-Big-Trafficjam",
+//            waypoints: [
+//                CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
+//                CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
+//            ],
+//            bundle: .mapboxCoreNavigation,
+//            accessToken: "nonsense"
+//        )
+//    }()
+//
+//    private lazy var testA12ToVeenendaalNormal = {
+//        Route(
+//            jsonFileName: "A12-To-Veenendaal-Normal",
+//            waypoints: [
+//                CLLocationCoordinate2D(latitude: 52.02224357, longitude: 5.78149084),
+//                CLLocationCoordinate2D(latitude: 52.03924958, longitude: 5.55054131)
+//            ],
+//            bundle: .mapboxCoreNavigation,
+//            accessToken: "nonsense"
+//        )
+//    }()
 }
 
 // MARK: - CLLocationManagerDelegate
@@ -587,13 +587,13 @@ extension RouteController: CLLocationManagerDelegate {
             var routeToApply = matchingRoute.route
             
             // When testing flag is flipped, return instead one of the testing routes
-            if shouldReturnTestingETAUpdateReroutes {
-                let rightOrLeft = Bool.random()
-                routeToApply = rightOrLeft ? testA12ToVeenendaalNormal : testA12ToVeenendaalNormalWithTraffic
-                print("[RouteController] Testing route: ON")
-            }
+//            if shouldReturnTestingETAUpdateReroutes {
+//                let rightOrLeft = Bool.random()
+//                routeToApply = rightOrLeft ? testA12ToVeenendaalNormal : testA12ToVeenendaalNormalWithTraffic
+//                print("[RouteController] Testing route: ON")
+//            }
                 
-            if isExpectedTravelTimeChangedSignificantly || shouldReturnTestingETAUpdateReroutes {
+            if isExpectedTravelTimeChangedSignificantly { //} || shouldReturnTestingETAUpdateReroutes {
                 // Set new route and inform delegates
                 print("[RouteController] Found matching route \(matchingRoute.matchPercentage)%, updating ETA...")
                 print("[RouteController] Duration remaining CURRENT: \(routeProgress.durationRemaining)")

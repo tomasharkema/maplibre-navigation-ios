@@ -1,9 +1,11 @@
-import Foundation
+import UIKit
+
+class BundleHelper { }
 
 extension Bundle {
     
     class var mapboxNavigation: Bundle {
-        get { return Bundle(for: NavigationViewController.self) }
+        get { Bundle.module }
     }
     
     func image(named: String) -> UIImage? {
